@@ -4,11 +4,10 @@ import os
 import sys
 # import psycopg2
 import json
-from bson import json_util
+import bson
 from pymongo import MongoClient
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
-
 
 def create_app():
     app = Flask(__name__)
@@ -17,8 +16,8 @@ def create_app():
 app = create_app()
 
 # REPLACE WITH YOUR DATABASE NAME
-MONGODATABASE = "myDatabase"
-MONGOSERVER = "localhost"
+MONGODATABASE = "Escuchas"
+MONGOSERVER = "locahost"
 MONGOPORT = 27017
 client = MongoClient(MONGOSERVER, MONGOPORT)
 mongodb = client[MONGODATABASE]
@@ -35,7 +34,7 @@ postgresdb = psycopg2.connect(
 '''
 
 #Cambiar por Path Absoluto en el servidor
-QUERIES_FILENAME = 'queries'
+QUERIES_FILENAME = '/var/www/flaskr/queries'
 
 
 @app.route("/")
@@ -53,7 +52,7 @@ def home():
 def mongo():
     query = request.args.get("query")
     results = eval('mongodb.'+query)
-    results = json_util.dumps(results, sort_keys=True, indent=4)
+    results = bson.json_util.dumps(results, sort_keys=True, indent=4)
     if "find" in query:
         return render_template('mongo.html', results=results)
     else:
