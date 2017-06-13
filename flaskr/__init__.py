@@ -4,7 +4,7 @@ import os
 import sys
 # import psycopg2
 import json
-import bson
+from bson import json_util
 from pymongo import MongoClient
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
@@ -17,7 +17,7 @@ app = create_app()
 
 # REPLACE WITH YOUR DATABASE NAME
 MONGODATABASE = "Escuchas"
-MONGOSERVER = "locahost"
+MONGOSERVER = "127.0.0.1"
 MONGOPORT = 27017
 client = MongoClient(MONGOSERVER, MONGOPORT)
 mongodb = client[MONGODATABASE]
@@ -52,7 +52,7 @@ def home():
 def mongo():
     query = request.args.get("query")
     results = eval('mongodb.'+query)
-    results = bson.json_util.dumps(results, sort_keys=True, indent=4)
+    results = json_util.dumps(results, sort_keys=True, indent=4)
     if "find" in query:
         return render_template('mongo.html', results=results)
     else:
